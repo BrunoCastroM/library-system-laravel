@@ -5,6 +5,20 @@
 @section('content')
 <h1>Catálogo de Livros</h1>
 
+<!-- Alerta de Sucesso -->
+@if (session('success'))
+    <div style="color: green; background-color: #d4edda; padding: 10px; margin-bottom: 10px; border: 1px solid #c3e6cb; border-radius: 4px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+<!-- Alerta de Erro -->
+@if (session('error'))
+    <div style="color: red; background-color: #f8d7da; padding: 10px; margin-bottom: 10px; border: 1px solid #f5c6cb; border-radius: 4px;">
+        {{ session('error') }}
+    </div>
+@endif
+
 <!-- Formulário de Pesquisa -->
 <form method="GET" action="{{ route('books.index') }}">
     <input type="text" name="search" placeholder="Pesquisar por título, autor ou gênero" value="{{ request('search') }}">
