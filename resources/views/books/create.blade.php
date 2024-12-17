@@ -6,8 +6,10 @@
 <div class="container">
     <h1>Adicionar Novo Livro</h1>
 
+    <!-- Exibe mensagens de erro -->
     @if ($errors->any())
-        <div style="color: red;">
+        <div style="color: red; margin-bottom: 10px;">
+            <h4>Por favor, corrija os erros abaixo:</h4>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -16,6 +18,7 @@
         </div>
     @endif
 
+    <!-- Formulário -->
     <form method="POST" action="{{ route('books.store') }}">
         @csrf
 

@@ -16,15 +16,15 @@ class BookController extends Controller
         $query = Book::with('author'); // Carrega livros com seus autores
 
         // Verifica se há algum termo de pesquisa
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
+        if ($request->filled('search')) {
+            $search = $request->input('search');
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('genre', 'like', '%' . $search . '%')
                   ->orWhereHas('author', function($q) use ($search) {
                       $q->where('first_name', 'like', '%' . $search . '%')
                         ->orWhere('last_name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhere('genre', 'like', '%' . $search . '%');
+                  });
             });
         }
 
@@ -39,9 +39,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        // Busca todos os autores para o dropdown
         $authors = Author::all();
-
         return view('books.create', compact('authors'));
     }
 
@@ -56,15 +54,21 @@ class BookController extends Controller
             'genre' => 'required|string|max:100',
             'language' => 'required|string|max:50',
             'isbn' => 'required|string|unique:books|size:13',
-            'publication_year' => 'required|integer|min:1900|max:' . date('Y'),
+            'publication_year' => 'required|integer|min:1|max:' . date('Y'),
             'notes' => 'nullable|string',
             'author_id' => 'required|exists:authors,id',
+        ], [
+            // Mensagens personalizadas
+            'title.required' => 'O título é obrigatório.',
+            'isbn.unique' => 'O ISBN deve ser único.',
+            'author_id.exists' => 'O autor selecionado não é válido.',
+            'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
+            'publication_year.min' => 'O ano de publicação não pode ser inferior a 1.',
         ]);
 
-        // Criação do livro no banco de dados
+        // Criação do livro
         Book::create($validated);
 
-        // Redireciona para a listagem com uma mensagem de sucesso
         return redirect()->route('books.index')->with('success', 'Livro criado com sucesso!');
     }
 
@@ -73,9 +77,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        // Busca todos os autores para o dropdown
         $authors = Author::all();
-
         return view('books.edit', compact('book', 'authors'));
     }
 
@@ -89,16 +91,22 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'genre' => 'required|string|max:100',
             'language' => 'required|string|max:50',
-            'isbn' => 'required|string|unique:books,isbn,' . $book->id,
-            'publication_year' => 'required|integer|min:1900|max:' . date('Y'),
+            'isbn' => 'required|string|unique:books,isbn,' . $book->id . '|size:13',
+            'publication_year' => 'required|integer|min:1|max:' . date('Y'),
             'notes' => 'nullable|string',
             'author_id' => 'required|exists:authors,id',
+        ], [
+            // Mensagens
+            'title.required' => 'O título é obrigatório.',
+            'isbn.unique' => 'O ISBN deve ser único.',
+            'author_id.exists' => 'O autor selecionado não é válido.',
+            'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
+            'publication_year.min' => 'O ano de publicação não pode ser inferior a 1.',
         ]);
 
-        // Atualiza o livro no banco de dados
+        // Atualização do livro
         $book->update($validated);
 
-        // Redireciona para a listagem com uma mensagem de sucesso
         return redirect()->route('books.index')->with('success', 'Livro atualizado com sucesso!');
     }
 
@@ -107,10 +115,8 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        // Deleta o livro
         $book->delete();
 
-        // Redireciona para a listagem com uma mensagem de sucesso
         return redirect()->route('books.index')->with('success', 'Livro deletado com sucesso!');
     }
 }
