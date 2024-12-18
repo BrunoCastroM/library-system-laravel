@@ -7,7 +7,7 @@
     <!-- Título -->
     <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mt-8 mb-6">Editar Livro</h1>
 
-    <!-- Exibe mensagens de erro -->
+    <!-- Exibir mensagens de erro -->
     @if ($errors->any())
         <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative dark:bg-red-800 dark:border-red-600 dark:text-red-200">
             <h4 class="font-semibold mb-2">Por favor, corrija os erros abaixo:</h4>

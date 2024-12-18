@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-// Grupo de rotas protegidas por autenticação
+// Grupo de rotas protegidas (requer autenticação)
 Route::middleware('auth')->group(function () {
     // Perfil do usuário
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
