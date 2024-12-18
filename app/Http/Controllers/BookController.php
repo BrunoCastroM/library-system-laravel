@@ -49,35 +49,28 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validação dos dados do formulário
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'genre' => 'required|string|max:100',
-                'language' => 'required|string|max:50',
-                'isbn' => 'required|string|unique:books|size:13',
-                'publication_year' => 'required|integer|min:1|max:' . date('Y'),
-                'notes' => 'nullable|string',
-                'author_id' => 'required|exists:authors,id',
-            ], [
-                'title.required' => 'O título é obrigatório.',
-                'isbn.unique' => 'O ISBN deve ser único.',
-                'author_id.exists' => 'O autor selecionado não é válido.',
-                'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
-                'publication_year.min' => 'O ano de publicação não pode ser inferior a 1.',
-            ]);
+    // Validação dos dados do formulário
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'genre' => 'required|string|max:100',
+        'language' => 'required|string|max:50',
+        'isbn' => 'required|string|unique:books|size:13',
+        'publication_year' => 'required|integer|min:1000|max:' . date('Y'),
+        'notes' => 'nullable|string',
+        'author_id' => 'required|exists:authors,id',
+    ], [
+        'title.required' => 'O título é obrigatório.',
+        'isbn.unique' => 'O ISBN já está em uso.',
+        'isbn.size' => 'O ISBN deve ter exatamente 13 números.',
+        'author_id.exists' => 'O autor selecionado não é válido.',
+        'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
+        'publication_year.min' => 'O ano de publicação não pode ser inferior a 1000.',
+    ]);
 
-            // Criação do livro
-            Book::create($validated);
+    // Criação do livro
+    Book::create($validated);
 
-            return redirect()->route('books.index')->with('success', 'Livro criado com sucesso!');
-        } catch (\Exception $e) {
-            Log::error('Erro ao criar livro: ' . $e->getMessage(), [
-                'user_id' => auth()->id(),
-                'data' => $request->all(),
-            ]);
-            return redirect()->route('books.index')->with('error', 'Ocorreu um erro ao criar o livro. Verifique os logs.');
-        }
+    return redirect()->route('books.index')->with('success', 'Livro criado com sucesso!');
     }
 
     /**
@@ -94,36 +87,28 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        try {
-            // Validação dos dados do formulário
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'genre' => 'required|string|max:100',
-                'language' => 'required|string|max:50',
-                'isbn' => 'required|string|unique:books,isbn,' . $book->id . '|size:13',
-                'publication_year' => 'required|integer|min:1|max:' . date('Y'),
-                'notes' => 'nullable|string',
-                'author_id' => 'required|exists:authors,id',
-            ], [
-                'title.required' => 'O título é obrigatório.',
-                'isbn.unique' => 'O ISBN deve ser único.',
-                'author_id.exists' => 'O autor selecionado não é válido.',
-                'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
-                'publication_year.min' => 'O ano de publicação não pode ser inferior a 1.',
-            ]);
+        // Validação dos dados do formulário
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'genre' => 'required|string|max:100',
+            'language' => 'required|string|max:50',
+            'isbn' => 'required|string|unique:books,isbn,' . $book->id . '|size:13',
+            'publication_year' => 'required|integer|min:1000|max:' . date('Y'),
+            'notes' => 'nullable|string',
+            'author_id' => 'required|exists:authors,id',
+        ], [
+            'title.required' => 'O título é obrigatório.',
+            'isbn.unique' => 'O ISBN já está em uso.',
+            'isbn.size' => 'O ISBN deve ter exatamente 13 números.',
+            'author_id.exists' => 'O autor selecionado não é válido.',
+            'publication_year.max' => 'O ano de publicação não pode ser maior que o ano atual.',
+            'publication_year.min' => 'O ano de publicação não pode ser inferior a 1000.',
+        ]);
 
-            // Atualização do livro
-            $book->update($validated);
+        // Atualização do livro
+        $book->update($validated);
 
-            return redirect()->route('books.index')->with('success', 'Livro atualizado com sucesso!');
-        } catch (\Exception $e) {
-            Log::error('Erro ao atualizar livro: ' . $e->getMessage(), [
-                'user_id' => auth()->id(),
-                'book_id' => $book->id,
-                'data' => $request->all(),
-            ]);
-            return redirect()->route('books.index')->with('error', 'Ocorreu um erro ao atualizar o livro. Verifique os logs.');
-        }
+        return redirect()->route('books.index')->with('success', 'Livro atualizado com sucesso!');
     }
 
     /**
