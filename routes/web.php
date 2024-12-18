@@ -8,10 +8,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Dashboard protegido com autenticação
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('books.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // Grupo de rotas protegidas por autenticação
 Route::middleware('auth')->group(function () {
