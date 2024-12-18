@@ -1,5 +1,3 @@
-# Sem título
-
 # 📚 **Biblioteca Laravel - Sistema de Gerenciamento**
 
 Bem-vindo ao sistema de gerenciamento de livros desenvolvido em **Laravel**! Este guia detalha os passos necessários para configurar e rodar o projeto localmente.
